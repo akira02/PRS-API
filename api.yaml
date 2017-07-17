@@ -1,0 +1,226 @@
+# types
+
+  # token string
+  Token: string
+
+  # date string in ISO format
+  Date: string 
+
+  T[]: array of type T
+  T?: value of type T or null
+
+  Course:
+    id: string
+    name: string
+    semester: string # e.g. 105-1
+    teacher:
+      id: string
+      name: string
+    students: string[]
+    # TODO ... add more fields
+
+  Assignment:
+    id: string
+    name: string
+    assigned: Date
+    due: Date
+    submitted: Date? # null if not submitted yet
+    attachment:string[]
+    course:
+      id: string
+      name: string
+    # TODO ... add more fields
+    
+    Attachment:
+      type: 
+      content: string
+
+  Submission: # submission for responses
+    id: string # give each submission an id?
+    assignment_id: string # belong which assignment
+    submitted: Date
+    user_name: string
+    user_nickname: string
+    link: string # link to assignment e.g. github repo link
+    description: string 
+
+
+# api 
+  # api by akira
+
+  /tokens:
+    GET:
+      # ...token info?
+    POST:
+      params:
+        username: string
+        password: string
+      responses:
+        200:
+          token: string
+          expire: Date
+        403: # when username/password is wrong
+          message: string # error message
+
+  /courses:
+    GET: # list courses taken by user
+      header:
+        Authorization: Token
+      responses:
+        200: Course[] # courses list
+        403: # bad token
+          message: string
+    POST: # 老師新增課程
+      header:
+        Authorization: Token
+      params:
+        name: string
+        description: string
+        attachment: string # 暫定？可能有圖片
+      responses:
+        200: 
+          success: boolean
+        403: # bad token
+          message: string
+          
+  /assignments:
+    GET: # list assignments of a course
+      header:
+        Authorization: Token
+      params:
+        # id of a course (optional)
+        # if provided, list only assignments which belong to the course
+        # otherwise, list all assignments assigned to the user
+        course_id: string?
+      responses:
+        200: Assignment[] # assignments sorted by date assigned
+        403: # bad token
+          message: string
+    POST: # 老師新增作業
+      header:
+        Authorization: Token
+      params:
+        course_id: string
+        name: string
+        description: string
+        data_link: string
+        # 同時要新增兩種表單：給同學互評用的問卷、對於此份作業的問卷
+        attachment: string # 暫定？可能有圖片
+      responses:
+        200: 
+          success: boolean
+          url: string # 互評用的問卷
+        403: # bad token
+          message: string
+
+  /submissions:
+    GET: # 已經繳交的作業
+      header:
+        Authorization: Token
+      params:
+        assignment_id: string
+      responses:
+        200: Submission[] # assignments sorted by date assigned
+        403: # bad token
+          message: string
+    
+    POST: # 同學繳交作業的動作
+      header:
+        Authorization: Token
+      params:
+        # id of assignment
+        assignment_id: string
+        link: string # link to assignment e.g. github repo link
+        description: string 
+      responses:
+        200: 
+          success: boolean
+        403: # bad token
+          message: string
+  
+  /responses:
+    GET: # list another student's submissions of a assignment
+      header:
+        Authorization: Token
+      params:
+        assignment_id: string
+      responses:
+        200: Submission[]
+        403: # bad token
+          message: string
+
+  /replies: # reply to specific submissions
+    POST:
+      header:
+        Authorization: Token
+      params:
+        submission_id: string
+        reply_text: string 
+        star: int # optional
+      responses:
+        200: 
+          success: boolean
+        403: # bad token
+          message: string
+     GET:
+      header:
+        Authorization: Token
+      params:
+        submissions_id: string
+      responses:
+        200: Submission[]
+        403: # bad token
+          message: string
+
+  /forms/create:
+    POST:
+      header:
+        Authorization: Token
+      params:
+        type: course, assignment, reply # 三種不同問卷
+        assignment_id: string
+      responses:
+        200:
+          success: boolean
+          url: string
+        403:
+          message: string
+
+  /forms/verify:
+    POST:
+      params:
+        token: string
+        action: string
+      responses:
+        200:
+          success: boolean
+        403:
+          message: string
+          
+  /users:
+    POST:
+    # Not sure
+      header:
+        Authorization: Token
+      params:
+        name: string
+        nickname: string
+        role: teacher, student
+        isAdmin: boolean
+        password: string
+      responses:
+        200:
+          success: boolean
+          url: string
+        403:
+          message: string
+     GET:
+      header:
+        Authorization: Token
+      params:
+        role: teacher, student
+        course_id: string
+      responses:
+        200: User[]
+        403: # bad token
+          message: string
