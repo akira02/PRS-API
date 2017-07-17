@@ -108,7 +108,7 @@
       responses:
         200: 
           success: boolean
-          id: string
+          id: string # 回傳新增成功的Assignment ID
         403: # bad token
           message: string
 
