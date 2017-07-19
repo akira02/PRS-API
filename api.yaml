@@ -25,14 +25,14 @@
     assigned: Date
     due: Date
     submitted: Date? # null if not submitted yet
-    attachment:string[]
+    attachments: Attachment[]
     course:
       id: string
       name: string
     # TODO ... add more fields
     
     Attachment:
-      type: 
+      type: form, image # not sure
       content: string
 
   Submission: # submission for responses
