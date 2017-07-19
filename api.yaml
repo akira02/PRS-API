@@ -17,6 +17,7 @@
       id: string
       name: string
     students: string[]
+    attachments: Attachment[]
     # TODO ... add more fields
 
   Assignment:
@@ -33,6 +34,7 @@
     
     Attachment:
       type: form, image # not sure
+      name: string # 
       content: string
 
   Submission: # submission for responses
