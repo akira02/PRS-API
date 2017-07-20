@@ -26,7 +26,6 @@
     assigned: Date
     due: Date
     description: string
-    data_link: string
     attachments: Attachment[]
     course:
       id: string
@@ -105,9 +104,8 @@
         assigned: Date
         due: Date
         description: string
-        data_link: string
-        # 同時要新增兩種表單：給同學互評用的問卷、對於此份作業的問卷
         attachments: Attachment[]
+        # 同時順便新增兩種表單：給同學互評用的問卷、對於此份作業的問卷
       responses:
         200: 
           success: boolean
