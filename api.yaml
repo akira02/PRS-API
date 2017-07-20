@@ -25,7 +25,8 @@
     name: string
     assigned: Date
     due: Date
-    submitted: Date? # null if not submitted yet
+    description: string
+    data_link: string
     attachments: Attachment[]
     course:
       id: string
@@ -49,9 +50,7 @@
 
 # api 
 
-  /tokens:
-    GET:
-      # ...token info?
+  /users/login:
     POST:
       params:
         username: string
@@ -103,10 +102,12 @@
       params:
         course_id: string
         name: string
+        assigned: Date
+        due: Date
         description: string
         data_link: string
         # 同時要新增兩種表單：給同學互評用的問卷、對於此份作業的問卷
-        attachment: string # 暫定？可能有圖片
+        attachments: Attachment[]
       responses:
         200: 
           success: boolean
