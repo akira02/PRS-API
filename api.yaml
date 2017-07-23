@@ -137,19 +137,8 @@
           success: boolean
         403: # bad token
           message: string
-  
-  /responses:
-    GET: # list another student's submissions of a assignment
-      header:
-        Authorization: Token
-      params:
-        assignment_id: string
-      responses:
-        200: Submission[]
-        403: # bad token
-          message: string
 
-  /replies: # reply to specific submissions
+  /replies: # 評其他同學作業
     POST:
       header:
         Authorization: Token
