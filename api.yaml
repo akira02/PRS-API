@@ -9,50 +9,59 @@
   T[]: array of type T
   T?: value of type T or null
 
-  Course:
-    id: string
+  Attachment: # Checked
+    type: form, image # not sure
+    name: string
+    content: string
+
+  User: # Checked
+    name: string
+    email: string
+    password: string # bcrypted
+    admin: boolean
+    role: string # student or teacher
+    courses: Course[]
+    submissions: Submission[]
+
+  Course: # Checked
     name: string
     semester: string # e.g. 105-1
-    teacher:
-      id: string
-      name: string
-    students: string[]
+    description: string
+    teacher: User
+    created_date: Date
+    students: User[]
     attachments: Attachment[]
+    assignments: Assignment[]
     # TODO ... add more fields
 
-  Assignment:
-    id: string
+  Assignment: # Checked
     name: string
+    created_date: Date
     assigned: Date
     due: Date
     description: string
     attachments: Attachment[]
-    course:
-      id: string
-      name: string
+    course: Course
+    submissions: Submission[]
     # TODO ... add more fields
     
-    Attachment:
-      type: form, image # not sure
-      name: string # 
-      content: string
 
-  Submission: # submission for responses
-    id: string # give each submission an id?
-    assignment_id: string # belong which assignment
+  Submission: # submission for responses, checked
+    assignment: Assignment # belong which assignment
     submitted: Date
-    user_name: string
-    user_nickname: string
+    user: User
+    nickname: string
     link: string # link to assignment e.g. github repo link
+    attachments: Attachment[]
     description: string 
 
 
 # api 
 
   /users/login:
-    POST:
+    POST: # Checked
       params:
-        username: string
+        name: string
         password: string
       responses:
         200:
@@ -61,29 +70,30 @@
         403: # when username/password is wrong
           message: string # error message
 
-  /courses:
-    GET: # list courses taken by user
+  /courses: # Checked
+    GET: # Checked, list courses taken by user
       header:
         Authorization: Token
       responses:
         200: Course[] # courses list
         403: # bad token
           message: string
-    POST: # 老師新增課程
+    POST: # Checked, teacher add new courses
       header:
         Authorization: Token
       params:
         name: string
         description: string
-        attachment: string # 暫定？可能有圖片
+        attachment: Attachment # temp, maybe images
       responses:
         200: 
           success: boolean
+          data: Course
         403: # bad token
           message: string
           
   /assignments:
-    GET: # list assignments of a course
+    GET: # list assignments of a course, done
       header:
         Authorization: Token
       params:
@@ -95,7 +105,7 @@
         200: Assignment[] # assignments sorted by date assigned
         403: # bad token
           message: string
-    POST: # 老師新增作業
+    POST: # 老師新增作業, done
       header:
         Authorization: Token
       params:
@@ -114,7 +124,7 @@
           message: string
 
   /submissions:
-    GET: # 已經繳交的作業
+    GET: # 已經繳交的作業, done
       header:
         Authorization: Token
       params:
@@ -124,7 +134,7 @@
         403: # bad token
           message: string
     
-    POST: # 同學繳交作業的動作
+    POST: # 同學繳交作業的動作, done
       header:
         Authorization: Token
       params:
@@ -138,7 +148,7 @@
         403: # bad token
           message: string
 
-  /replies: # 評其他同學作業
+  /replies: # reply to specific submissions, TODO
     POST:
       header:
         Authorization: Token
@@ -162,10 +172,11 @@
           message: string
 
   /forms/create:
-    POST:
+    POST: # done
       header:
         Authorization: Token
       params:
+        name: string
         type: course, assignment, reply # 三種不同問卷
         assignment_id: string
       responses:
@@ -176,7 +187,7 @@
           message: string
 
   /forms/verify:
-    POST:
+    POST: # done
       params:
         token: string
         action: string
@@ -187,23 +198,22 @@
           message: string
           
   /users:
-    POST:
-    # Not sure
+    POST: # Checked
       header:
         Authorization: Token
       params:
         name: string
         nickname: string
         role: teacher, student
-        isAdmin: boolean
+        admin: boolean
         password: string
       responses:
         200:
           success: boolean
-          url: string
-        403:
+          data: User
+        403: # when user already exists
           message: string
-     GET:
+    GET: # TODO
       header:
         Authorization: Token
       params:
